@@ -8,23 +8,24 @@ port = 1883
 # topic = "meu_topico"
 username = 'xyoowllx:xyoowllx'
 password = 'Gle6D-nfdPPGDfg-uLDfQLw9W349orBv'
-
+# protocol = 'tcp'
+tls_enabled: True
 
 # Cria o aplicativo Flask
 app = Flask(__name__)
 
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print("Connected to MQTT Broker!")
-        # Subscribe to topics here
-    else:
-        print(f"Failed to connect, rc: {rc}")
+# def on_connect(client, userdata, flags, rc):
+#     if rc == 0:
+#         print("Connected to MQTT Broker!")
+#         # Subscribe to topics here
+#     else:
+#         print(f"Failed to connect, rc: {rc}")
 
 client = mqtt.Client()
-client.connect(broker_address, port, keepalive=6000)
+client.connect(broker_address, port, keepalive=60)
 
 
-
+# clientid = client
 
 # Define a rota para receber o POST
 @app.route("/", methods=[ "POST"])
