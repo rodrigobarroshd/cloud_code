@@ -14,12 +14,12 @@ tls_enabled: True
 # Cria o aplicativo Flask
 app = Flask(__name__)
 
-# def on_connect(client, userdata, flags, rc):
-#     if rc == 0:
-#         print("Connected to MQTT Broker!")
-#         # Subscribe to topics here
-#     else:
-#         print(f"Failed to connect, rc: {rc}")
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected to MQTT Broker!")
+        # Subscribe to topics here
+    else:
+        print(f"Failed to connect, rc: {rc}")
 
 client = mqtt.Client()
 client.connect(broker_address, port, keepalive=60)
