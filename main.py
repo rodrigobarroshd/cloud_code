@@ -1,6 +1,9 @@
+import random
 from flask import Flask
+from flask_mqtt import Mqtt
 import paho.mqtt.client as Mqtt
-# import flask_mqtt as Mqtt
+# from flask_socketio import SocketIO
+
 
 app = Flask(__name__)
 # use the free broker from HIVEMQ
@@ -15,22 +18,20 @@ app.config['MQTT_KEEPALIVE'] = 5
 # set TLS to disabled for testing purposes
 app.config['MQTT_TLS_ENABLED'] = False
 
-mqtt.Client = Mqtt
+# mqtt = Mqtt.Client()
 
-
+client_id = f'python-mqtt-{random.randint(0, 1000)}'
+mqtt = Mqtt.Client(client_id)
 def create_app():
     app = Flask(__name__)
     mqtt.init_app(app)
 
 
-@client.connect()
+@mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
     mqtt.subscribe('home/mytopic')
-
 
 
 # Inicia o servidor Flask
 if __name__ == "__main__":
     app.run(debug=True)
-
-

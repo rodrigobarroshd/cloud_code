@@ -5,30 +5,43 @@ import paho.mqtt.client as mqtt
 # Configurações do MQTT
 broker_address = "jackal.rmq.cloudamqp.com"
 port = 1883
-# topic = "meu_topico"
+topic = "meu_topico"
 username = 'xyoowllx:xyoowllx'
 password = 'Gle6D-nfdPPGDfg-uLDfQLw9W349orBv'
-# protocol = 'tcp'
-tls_enabled: True
 
 # Cria o aplicativo Flask
 app = Flask(__name__)
 
+# Cria o cliente MQTT
+client = mqtt.Client()
+
+# Define a função de callback para conexão
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to MQTT Broker!")
-        # Subscribe to topics here
+        print("Conectado ao broker MQTT com sucesso!")
     else:
-        print(f"Failed to connect, rc: {rc}")
+        print(f"Falha ao conectar, código de erro: {rc}")
 
-client = mqtt.Client()
+# Define a função de callback para publicação
+def on_publish(client, userdata, mid):
+    print("Mensagem publicada!")
+
+# Define o callback para conexão
+client.on_connect = on_connect
+# Define o callback para publicação
+client.on_publish = on_publish
+
+# Configura as credenciais do MQTT
+client.username_pw_set(username, password)
+
+# Conecta ao broker MQTT
 client.connect(broker_address, port, keepalive=60)
 
-
-# clientid = client
+# Inicia o loop do cliente MQTT em segundo plano
+client.loop_start()
 
 # Define a rota para receber o POST
-@app.route("/", methods=[ "POST"])
+@app.route("/", methods=["POST"])
 def receive_message():
     # Recebe a mensagem JSON do corpo da requisição
     message_json = request.get_json()
@@ -50,26 +63,14 @@ def process_message(message_json):
 
             # Publica a mensagem no MQTT
             publish_message(topic, message)
-
         else:
             raise TypeError("Mensagem JSON deve ser um dicionário.")
-
     except Exception as e:
         print(f"Erro ao processar mensagem: {e}")
 
-
-
-
-
-
-
-
 # Função para publicar a mensagem no MQTT
 def publish_message(topic, message):
-    # client = mqtt.Client()
-    # client.connect(broker_address, port)
     client.publish(topic, message)
-    # client.disconnect()
 
 # Inicia o servidor Flask
 if __name__ == "__main__":
